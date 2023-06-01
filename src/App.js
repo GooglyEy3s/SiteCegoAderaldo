@@ -1,17 +1,21 @@
 import './App.css';
-import Home from "../src/assets/Home"
+import './assets/Home';
 
-import {Header, ImageSlider, SobreNos, Footer} from './components/Home/Header';
+import MainPage from "../src/components/MainPage/MainPage"
+// import Vlibras from './components/Vlibras/Vlibras';
+// import VLibras from 'vlibras-react';
+// import VLibras from 'vlibras-react';
+// import Vlibras from './components/Vlibras/Vlibras.json'
+// import VLibras from '@moreiraste/react-vlibras/dist/types';
+import VLibras from '@djpfs/react-vlibras/dist/types';
+
+
 function App() {
   return (
     <>
-       <Header />
-      <ImageSlider />
-      <SobreNos />
-      <Footer />
+    <MainPage />
+    <VLibras />
     </>
-   
   );
 }
-
 export default App;
