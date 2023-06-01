@@ -91,10 +91,10 @@ const Header = () => {
             <div className="header-content">
                 <Link to={'/'}><img src={Casa} alt="" style={{ width: "150px" }} /></Link>
                 <div className="header-functions">
-                    <a href="trabalhoPublico"> Publicações</a>
+                    <Link to={'/PaginaPublicacao'}><a > Publicações</a></Link>
                     <a href="trabalhoPublico">Noticias e Oportunidades</a>
                     <a href="">Calendário de Eventos</a>
-                    <Link to={'/PaginaPublicacao'}>
+                    <Link to={''}>
                         <img src={Usuario} alt="" />
                     </Link>
                     
