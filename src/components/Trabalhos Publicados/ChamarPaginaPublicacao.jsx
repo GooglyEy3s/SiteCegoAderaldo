@@ -1,8 +1,14 @@
 import PaginaPublicacao from "./PaginaPublicacao";
+import { Header, Footer} from "../Home/Home"
 
 const ChamarPaginaPublicacao = () => {
     return(
-        <PaginaPublicacao />
+        <>
+            <Header />
+            <PaginaPublicacao />
+            <Footer />
+        </>
+        
     )
 }
 

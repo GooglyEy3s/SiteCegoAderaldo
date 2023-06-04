@@ -1,12 +1,11 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
-//CALENDARIO
-import Calendar from "./Calendar"
-
 // HEADER
 import Casa from "../../midia/logo Casa de saberes.png"
 import Usuario from "../../midia/usuario.png"
+import Fonte from "./Fonte"
+import contrat from "../../midia/contrast.png"
 
 
 // // // IMAGE-SLIDER
@@ -72,7 +71,7 @@ const ImageSlider = ({slides}) => {
                             </div>
                             <div className={index === current ? 'slide texto active' : 'slide texto'}
                                 key={index}>
-                                <h1>{slide.titulo}</h1>
+                                <h1 className="content">{slide.titulo}</h1>
                                 <p>{slide.descrisao}</p>
                             </div>
                         </div>
@@ -87,14 +86,17 @@ const ImageSlider = ({slides}) => {
 const Header = () => {
     return (
         <div className="header">
-            <div className="barra-header"></div>
+            <div className="barra-header">
+                <Fonte />
+                <img className="contraste" src={contrat} alt="" />
+            </div>
             <div className="header-content">
                 <Link to={'/'}><img src={Casa} alt="" style={{ width: "150px" }} /></Link>
                 <div className="header-functions">
                     <Link to={'/PaginaPublicacao'}><a > Publicações</a></Link>
                     <a href="trabalhoPublico">Noticias e Oportunidades</a>
                     <a href="">Calendário de Eventos</a>
-                    <Link to={''}>
+                    <Link to={'/Login'}>
                         <img src={Usuario} alt="" />
                     </Link>
                     

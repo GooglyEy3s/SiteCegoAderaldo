@@ -4,6 +4,8 @@ import { TextField, Button } from '@material-ui/core';
 import PdfIcon from '../../midia/pdf-icon.png';
 import BaixoImage from '../../midia/baixo.png';
 import CasalImage from '../../midia/casal.png';
+import lixo from "../../midia/lixo.png";
+import pesquisa from "../../midia/pesquisa.png";
 
 
 function PaginaPublicacao() {
@@ -11,7 +13,8 @@ function PaginaPublicacao() {
   const [currentPage, setCurrentPage] = useState(1);
   const [publicacoesPerPage] = useState(4);
 
-  const publicacoes = [
+  const [publicacoes, setPublicacoes] = useState([
+    
     { id: 1, titulo: 'Publicação 1' },
     { id: 2, titulo: 'Publicação 2' },
     { id: 3, titulo: 'Publicação 3' },
@@ -23,8 +26,9 @@ function PaginaPublicacao() {
     { id: 9, titulo: 'Publicação 9' },
     { id: 10, titulo: 'Publicação 10' },
     { id: 11, titulo: 'Publicação 10' },
-    { id: 12, titulo: 'Publicação 10' },
-  ];
+    { id: 12, titulo: 'Publicação 10' }
+    
+  ])
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -50,12 +54,19 @@ function PaginaPublicacao() {
   for (let i = 1; i <= Math.ceil(filteredPublicacoes.length / publicacoesPerPage); i++) {
     pageNumbers.push(i);
   }
+  const deletePublicacao = (id) =>{
+    const updatedPublicacoes = publicacoes.filter((publicacao) => publicacao.id !== id);
+    setPublicacoes(updatedPublicacoes);
+  };
+  
+
 
   return (
     <div>
       <h3 className="publicacoes-title">Publicações</h3>
       <h2 className="publicacoes-subtitle">Trabalhos e Pesquisas publicadas pela Casa de Saberes!</h2>
       <div className="search-container">
+        <img src={pesquisa} alt="" />
         <TextField
           label="Pesquisar"
           variant="outlined"
@@ -80,7 +91,14 @@ function PaginaPublicacao() {
                   {publicacao.titulo}
                 </a>
               </h3>
-              <img src={BaixoImage} alt="Baixo" className="baixo-image" />
+              {/* <img src={BaixoImage} alt="Baixo" className="baixo-image" /> */}
+              <Button 
+                variant="contained"
+                color="secondary"
+                onClick={() => deletePublicacao(publicacao.id)}
+              >
+                <img src={lixo} alt="" />
+              </Button>
             </div>
           </div>
         ))}
@@ -104,9 +122,9 @@ function PaginaPublicacao() {
         ))}
       </div>
 
-      <div className="casal-container">
+      {/* <div className="casal-container">
         <img src={CasalImage} alt="Casal" className="casal-image" />
-      </div>
+      </div> */}
     </div>
   );
 }
