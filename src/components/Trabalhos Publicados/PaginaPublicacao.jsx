@@ -2,33 +2,96 @@
 import React, { useState } from 'react';
 import { TextField, Button } from '@material-ui/core';
 import PdfIcon from '../../midia/pdf-icon.png';
-import BaixoImage from '../../midia/baixo.png';
-import CasalImage from '../../midia/casal.png';
 import lixo from "../../midia/lixo.png";
 import pesquisa from "../../midia/pesquisa.png";
 
+import { useContext } from "react"
+import { AdminContext, AdminProvider } from "../Login_Contexto/ContextoLogin";
+import { Link } from 'react-router-dom';
+
+import { publicacoes2 } from '../CriarPublicacao/publicacoes';
+import axios from "axios"
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
+
 
 function PaginaPublicacao() {
+
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [publicacoesPerPage] = useState(4);
 
-  const [publicacoes, setPublicacoes] = useState([
-    
-    { id: 1, titulo: 'Publicação 1' },
-    { id: 2, titulo: 'Publicação 2' },
-    { id: 3, titulo: 'Publicação 3' },
-    { id: 4, titulo: 'Publicação 4' },
-    { id: 5, titulo: 'Publicação 5' },
-    { id: 6, titulo: 'Publicação 6' },
-    { id: 7, titulo: 'Publicação 7' },
-    { id: 8, titulo: 'Publicação 8' },
-    { id: 9, titulo: 'Publicação 9' },
-    { id: 10, titulo: 'Publicação 10' },
-    { id: 11, titulo: 'Publicação 10' },
-    { id: 12, titulo: 'Publicação 10' }
-    
-  ])
+  const { isAdmin, setIsAdmin } = useContext(AdminContext);
+
+  // const [publicacoes, setPublicacoes] = useState([
+
+
+  //   { id: 11, titulo: 'Artigo Casa Saberes' },
+  //   { id: 12, titulo: 'Publicação 10' }
+
+  // ])
+
+
+  const [publicacoes, setTrabalhos] = useState([])
+  const [mudou, setMudou] = useState(false)
+  const navigate = useNavigate()
+
+  useEffect(
+    () => {
+      axios.get("http://localhost:3001/trabalhos/listar")
+        .then(
+          (response) => {
+            console.log(mudou)
+            setTrabalhos(response.data)
+          }
+        )
+        .catch(error => console.log(error))
+    }
+    ,
+    []
+  )
+  useEffect(
+    () => {
+      axios.get("http://localhost:3001/trabalhos/listar")
+        .then(
+          (response) => {
+            console.log(mudou)
+            setTrabalhos(response.data)
+          }
+        )
+        .catch(error => console.log(error))
+    }
+    ,
+    [mudou]
+  )
+
+  function deleteTrabalho(id) {
+    if (window.confirm("Deseja Excluir? " + id)) {
+      axios.delete(`http://localhost:3001/trabalhos/delete/${id}`)
+        .then(
+          (response) => {
+            deleteTeste(id)
+            setMudou(!mudou)
+          }
+        )
+        .catch(error => console.log(error))
+    }
+  }
+
+  function deleteTeste(id) {
+    for (let i = 0; i < publicacoes.length; i++) {
+      if (publicacoes[i].id == id) {
+        publicacoes.splice(i, 1);
+        return true;
+      }
+    }
+    return false
+  }
+
+
+
+  // setPublicacoes(publicacoes2)
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -54,19 +117,22 @@ function PaginaPublicacao() {
   for (let i = 1; i <= Math.ceil(filteredPublicacoes.length / publicacoesPerPage); i++) {
     pageNumbers.push(i);
   }
-  const deletePublicacao = (id) =>{
-    const updatedPublicacoes = publicacoes.filter((publicacao) => publicacao.id !== id);
-    setPublicacoes(updatedPublicacoes);
-  };
-  
+  // const deletePublicacao = (id) =>{
+  //   const updatedPublicacoes = publicacoes.filter((publicacao) => publicacao.id !== id);
+  //   setTrabalhos(updatedPublicacoes);
+  // };
+
 
 
   return (
-    <div>
-      <h3 className="publicacoes-title">Publicações</h3>
-      <h2 className="publicacoes-subtitle">Trabalhos e Pesquisas publicadas pela Casa de Saberes!</h2>
+    <div className='todaspublicacoes'>
+      <div className="cabecalho">
+        <h1 className="titulo"> Publicações</h1>
+        <p className="subtitulo">Trabalhos e Pesquisas publicadas pela Casa de Saberes!</p>
+      </div>
+
       <div className="search-container">
-        <img src={pesquisa} alt="" />
+        <img src={pesquisa} alt="Lupa de pesquisa ilustrada" />
         <TextField
           label="Pesquisar"
           variant="outlined"
@@ -75,32 +141,63 @@ function PaginaPublicacao() {
           fullWidth
           className="search-input"
         />
+        <div class="botao-postar"><h1>+</h1> Nova Publicação</div>
+        <Link to={'/novaPublicacao'}>
+          <div className={isAdmin === true ? 'botao-postar active' : 'botao-postar '}><h1>+</h1> Nova Publicação</div>
+        </Link>
+
       </div>
 
       <div
         className={`publicacoes-container ${showNoResults ? "no-results-message" : ""}`}
       >
         {currentPublicacoes.map((publicacao) => (
-          <div key={publicacao.id} className="publicacao-item">
-            <div className="publicacao-item-content">
-              <a href="#" className="publicacao-link">
-                <img src={PdfIcon} alt="Ícone PDF" className="pdf-icon" />
-              </a>
-              <h3>
-                <a href="#" className="publicacao-link">
-                  {publicacao.titulo}
-                </a>
-              </h3>
-              {/* <img src={BaixoImage} alt="Baixo" className="baixo-image" /> */}
-              <Button 
-                variant="contained"
-                color="secondary"
-                onClick={() => deletePublicacao(publicacao.id)}
-              >
-                <img src={lixo} alt="" />
-              </Button>
-            </div>
-          </div>
+          <>
+
+          
+              {isAdmin ? (
+                <div key={publicacao.id} className="publicacao-item">
+                  <div className="publicacao-item-content">
+                    <a href="#" className="publicacao-link">
+                      <img src={PdfIcon} alt="Ícone PDF" className="pdf-icon" />
+                    </a>
+                    <h3>
+                      <a href="#" className="publicacao-link">
+                        {publicacao.titulo}
+                      </a>
+                    </h3>
+                    {/* <img src={BaixoImage} alt="Baixo" className="baixo-image" /> */}
+                    <Button
+                      variant="contained"
+
+                      onClick={() => deleteTrabalho(publicacao._id)}
+                    >
+                      <img src={lixo} alt="ícone de lixeira para excluir trabalho selecionado" />
+                    </Button>
+                  </div> 
+                </div>
+            ) : (
+              publicacao.publico == true ?(
+                <div key={publicacao.id} className="publicacao-item">
+                    <div className="publicacao-item-content">
+                    <a href="#" className="publicacao-link">
+                      <img src={PdfIcon} alt="Ícone PDF" className="pdf-icon" />
+                    </a>
+                    <h3>
+                      <a href="#" className="publicacao-link">
+                        {publicacao.titulo}
+                      </a>
+                    </h3>
+                    {/* <img src={BaixoImage} alt="Baixo" className="baixo-image" /> */}
+                  </div>
+                </div>
+                
+              ) : null
+            )}
+           
+          
+          </>
+          
         ))}
         {showNoResults && (
           <div className="no-results-text">

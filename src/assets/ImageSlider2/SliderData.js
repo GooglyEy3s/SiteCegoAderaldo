@@ -13,11 +13,11 @@ export const SliderData = [
     id:
     1,
     image:
-      './imageSlider/slide1.png',
+      './imageSlider/slide4.png',
     titulo:
       'Segundo Slide',
     descrisao:
-      'Esse é o Segundo slide mds :O'
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint mollitia aut expedita veritatis ea optio pariatur itaque, obcaecati excepturi officiis. Hic dolor iste minus provident dolores '
   },
   {
     id:
@@ -27,7 +27,7 @@ export const SliderData = [
     titulo:
       'Terceiro Slide',
     descrisao:
-      'Esse é o Terceiro AAAAAAAAAA :OO'
+      'Esse é o Terceiro Slide'
   },
   // {
   //   image:

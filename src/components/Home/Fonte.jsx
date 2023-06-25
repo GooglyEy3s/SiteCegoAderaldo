@@ -7,7 +7,7 @@ class App extends Component {
     return (
       <div className="app">
         <FontSizeChanger
-          targets={['h1, p, a ']}
+          targets={['h1, p, a, h3, h2 ']}
           onChange={(element, newValue, oldValue) => {
             console.log(element, newValue, oldValue);
           }}

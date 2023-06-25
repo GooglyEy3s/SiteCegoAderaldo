@@ -1,4 +1,4 @@
-import { Header, SobreNos, Footer, ImageSlider } from "./Home"
+import { Header, SobreNos, Footer, ImageSlider, Noticias } from "./Home"
 import Calendar from "./Calendar"
 import { SliderData } from "../../assets/ImageSlider2/SliderData"
 
@@ -9,6 +9,7 @@ const ChamarHome = () => {
             <ImageSlider slides={SliderData} />
             <SobreNos />
             <Calendar />
+            <Noticias />
             <Footer />
         </div>
     )
