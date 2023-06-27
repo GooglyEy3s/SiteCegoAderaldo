@@ -32,7 +32,9 @@ import Facebook from "../../midia/face.png"
 import Instagram from "../../midia/insta.png"
 import axios from "axios";
 
-
+// PESQUISA
+import lupa from "../../midia/lupa2.png"
+import x from "../../midia/volta3.png"
 
 
 const ImageSlider = ({slides}) => {
@@ -91,6 +93,7 @@ const ImageSlider = ({slides}) => {
                                 <p>{slide.descrisao}</p>
                             </div>
                         </div>
+                        
                     </>            
                    
                 );
@@ -98,6 +101,50 @@ const ImageSlider = ({slides}) => {
         </div>
     );
 };
+
+const BotaoPesquisa = () => {
+    const [pesquisas, SetPesquisa] = useState([{}])
+    const [classe, SetClass] = useState('')
+
+    
+
+    useEffect(
+        () => {
+            axios.get("http://localhost:3001/pesquisas/listar")
+                .then(
+                    (response) => {
+                        let pesquisas2 = response.data.slice().reverse()[0]
+                        const links = pesquisas2.link.split('=').map(link => link.replace(/"/g, ''));
+                        SetPesquisa(links[1])
+                        console.log(links[1])
+                    }
+                )
+                .catch(error => console.log(error))
+        }
+        ,
+        []
+    )
+    return(
+        <>
+            <div className={"overlayNovoEvento " +  classe}>
+                <div className={"formulario-container " + classe}>
+                    <div className="fechar-formulario">
+                        <img src={x} alt="" onClick={() => SetClass('')} />
+                        <h1>Pesquisa</h1>
+                    </div>
+                    <iframe src={pesquisas} width="100%" height="90%" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+                </div>
+            </div>
+            
+            <div className="caixa-botao">
+                <div className="botao active botao-pesquisa" onClick={() => SetClass('active')}>
+                    <img src={lupa} alt="" />
+                    <p>Nova pesquisa disponível!</p>
+                </div>
+            </div>
+        </>
+    )
+}
 
 const Header = () => {
     return (
@@ -279,10 +326,10 @@ const Noticias = () => {
         </div>
         <div className="header-pesquisas">
             <div className="cabecalho">
-                <h1 className="titulo"> Pesquisas</h1>
-                <p className="subtitulo">Nós ajude a entender você da melhor forma!</p>
+                <h1 className="titulo"> Noticias</h1>
+                <p className="subtitulo">Conjunto de noticias e oportunidades pra você!</p>
             </div>
-            {isAdmin? (<div className="botao" onClick={() => SetClasse('overlayNoticias active')}><p>+ Adicionar Noticia </p></div>):(null)}
+            {isAdmin? (<div className={isAdmin === true ? 'botao active' : 'botao '} onClick={() => SetClasse('overlayNoticias active')}><p>+ Adicionar Noticia </p></div>):(null)}
         </div>
   
         <div className="container">
@@ -361,4 +408,4 @@ const Footer = () => {
     )
 }
 
-export { Header,Footer, ImageSlider, SobreNos, Noticias}
+export { Header,Footer, ImageSlider, SobreNos, Noticias, BotaoPesquisa}

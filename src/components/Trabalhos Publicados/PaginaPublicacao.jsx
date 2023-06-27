@@ -125,11 +125,18 @@ function PaginaPublicacao() {
 
 
   return (
-    <div className='todaspublicacoes'>
-      <div className="cabecalho">
-        <h1 className="titulo"> Publicações</h1>
-        <p className="subtitulo">Trabalhos e Pesquisas publicadas pela Casa de Saberes!</p>
+    <>
+     <div className="header-pesquisas">
+        <div className="cabecalho">
+          <h1 className="titulo"> Publicações</h1>
+          <p className="subtitulo">Trabalhos oficiais feitos pela Casa de Saberes!</p>
+        </div>
       </div>
+    
+    
+    <div className='todaspublicacoes'>
+     
+      
 
       <div className="search-container">
         <img src={pesquisa} alt="Lupa de pesquisa ilustrada" />
@@ -223,6 +230,7 @@ function PaginaPublicacao() {
         <img src={CasalImage} alt="Casal" className="casal-image" />
       </div> */}
     </div>
+    </>
   );
 }
 

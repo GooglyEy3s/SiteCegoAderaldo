@@ -2,10 +2,15 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import { useContext } from "react";
 
 import lupa from "../../midia/lupa.png"
 import x from "../../midia/volta3.png"
 import volta from "../../midia/volta3.png";
+import lixo from "../../midia/lixo.png"
+
+import { AdminContext, AdminProvider } from "../Login_Contexto/ContextoLogin";
+
 
 import { Container, Box, Typography, TextField, Button } from "@mui/material"
 
@@ -19,9 +24,39 @@ const Pesquisas = () => {
     const [descricaoPesquisa, SetDescricaoPesquisa] = useState('')
     const [linkPesquisa, SetLinkPesquisa] = useState('')
 
+    const { isAdmin, setIsAdmin } = useContext(AdminContext);
+
     const [mudou, setMudou] = useState(false)
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [publicacoesPerPage] = useState(4);
 
+
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+        setCurrentPage(1);
+    };
+
+    const filteredPublicacoes = pesquisas.filter((publicacao) =>
+        publicacao.titulo.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const hasResults = filteredPublicacoes.length > 0;
+    const showNoResults = searchQuery.length > 0 && !hasResults;
+
+    const indexOfLastPublicacao = currentPage * publicacoesPerPage;
+    const indexOfFirstPublicacao = indexOfLastPublicacao - publicacoesPerPage;
+    const currentPublicacoes = filteredPublicacoes.slice(indexOfFirstPublicacao, indexOfLastPublicacao);
+
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(filteredPublicacoes.length / publicacoesPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
     const PesquisaClicada = (link) => {
         const links = link.split('=').map(link => link.replace(/"/g, ''));
@@ -59,18 +94,30 @@ const Pesquisas = () => {
     )
 
     const MontarPesquisa = () => {
-        const novoTrabalho = { titulo: tituloPesquisa, descricao: descricaoPesquisa, link: linkPesquisa}
+        const novoTrabalho = { titulo: tituloPesquisa, descricao: descricaoPesquisa, link: linkPesquisa }
         axios.post("http://localhost:3001/pesquisas/adicionar", novoTrabalho)
-          .then(
-            (response) => {
-              alert(`Trabalho: ${response.data.nome} adicionado!`)
-              SetmodalClass("")
-              setMudou(!mudou)
-              
-            }
-          )
-          .catch(error => console.log(error))
-      }
+            .then(
+                (response) => {
+                    alert(`Trabalho: ${response.data.nome} adicionado!`)
+                    SetmodalClass("")
+                    setMudou(!mudou)
+
+                }
+            )
+            .catch(error => console.log(error))
+    }
+
+    function deletar(id) {
+        if (window.confirm("Deseja Excluir? " + id)) {
+            axios.delete(`http://localhost:3001/pesquisas/delete/${id}`)
+                .then(
+                    (response) => {
+                        setMudou(!mudou)
+                    }
+                )
+                .catch(error => console.log(error))
+        }
+    }
 
     return (
         <>
@@ -79,7 +126,7 @@ const Pesquisas = () => {
                     <h1 className="titulo"> Pesquisas</h1>
                     <p className="subtitulo">Nós ajude a entender você da melhor forma!</p>
                 </div>
-                <div className="botao" onClick={() => SetmodalClass('active')}><p>+ Nova Pesquisa</p></div>
+                <div className={isAdmin === true ? 'botao active' : 'botao '} onClick={() => SetmodalClass('active')}><p>+ Nova Pesquisa</p></div>
             </div>
 
             <div className={"overlayNovoEvento " + classe + modalClass}>
@@ -87,76 +134,74 @@ const Pesquisas = () => {
                     <div className="titulo">
                         <img src={volta} alt="" onClick={() => SetmodalClass('')} />
                         <h1>Nova pesquisa</h1>
-
-
                     </div>
                     <div className="informacoesEvento">
-                    
 
-                    <Container maxWidth="md" marginLeft="10%" >
 
-                        <div className="titulo-calendario"><h2>Informações sobre a Pesquisa</h2></div>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                width: "80%",
-                                height:"80%",
-                                mt: "3%",
-                                // alignItems: "center",
+                        <Container maxWidth="md" marginLeft="10%" >
 
-                            }}
-                        >
-                            <TextField
-                                required
-                                margin="normal"
-                                fullWidth
-                                id="email"
-                                label="Titulo da pesquisa"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                onChange={(x) => {SetTituloPesquisa(x.target.value)}}
-                            />
-                            <TextField
-                                required
-                                margin="normal"
-                                fullWidth
-                                id="email"
-                                label="Descrição dapesquisa"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                onChange={(x) => {SetDescricaoPesquisa(x.target.value)}}
+                            <div className="titulo-calendario"><h2>Informações sobre a Pesquisa</h2></div>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    width: "80%",
+                                    height: "80%",
+                                    mt: "3%",
+                                    // alignItems: "center",
 
-                            />
-                            <TextField
-                                sx={{ width: "100%", }}
-                                required
-                                margin="normal"
-                                fullWidth
-                                id="email"
-                                label="link da pesquisa"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                onChange={(x) => {SetLinkPesquisa(x.target.value)}}
-
-                            />
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                onClick={MontarPesquisa}
-                                className="botao-envio" 
+                                }}
                             >
-                                Criar nova pesquisa
-                            </Button>
-                        </Box>
-                    </Container>
-                </div>
+                                <TextField
+                                    required
+                                    margin="normal"
+                                    fullWidth
+                                    id="email"
+                                    label="Titulo da pesquisa"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                    onChange={(x) => { SetTituloPesquisa(x.target.value) }}
+                                />
+                                <TextField
+                                    required
+                                    margin="normal"
+                                    fullWidth
+                                    id="email"
+                                    label="Descrição dapesquisa"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                    onChange={(x) => { SetDescricaoPesquisa(x.target.value) }}
+
+                                />
+                                <TextField
+                                    sx={{ width: "100%", }}
+                                    required
+                                    margin="normal"
+                                    fullWidth
+                                    id="email"
+                                    label="link da pesquisa"
+                                    name="email"
+                                    autoComplete="email"
+                                    autoFocus
+                                    onChange={(x) => { SetLinkPesquisa(x.target.value) }}
+
+                                />
+
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={MontarPesquisa}
+                                    className="botao-envio"
+                                >
+                                    Criar nova pesquisa
+                                </Button>
+                            </Box>
+                        </Container>
+                    </div>
                 </div>
                 <div className={"formulario-container " + classe}>
                     <div className="fechar-formulario">
@@ -169,16 +214,33 @@ const Pesquisas = () => {
             <div className="pesquisas">
                 {pesquisas.slice().reverse().map((pesquisa) =>
                     <>
-                        <div className="item-pesquisa" onClick={() => PesquisaClicada(pesquisa.link)}>
-                            <div className="pesquisa">
-                                <img src={lupa} alt="" />
-                                <h1>{pesquisa.titulo}</h1>
+                        <div className="item-pesquisa" >
+                            <div className="pesquisa" >
+                                <div className="header-pesquisa" onClick={() => PesquisaClicada(pesquisa.link)}>
+                                    <img src={lupa} alt="" />
+                                    <h1>{pesquisa.titulo}</h1>
+                                </div>
+                                <img className={isAdmin === true ? 'botao-delete active' : 'botao-delete '} src={lixo} alt="" onClick={() => deletar(pesquisa._id)} />
+
                             </div>
                             <div className="descricao"><p>{pesquisa.descricao}</p></div>
                         </div>
                     </>
                 )}
             </div>
+            <div className="pagination">
+                {pageNumbers.map((number) => (
+                    <Button
+                        key={number}
+                        variant="contained"
+                        color={number === currentPage ? 'secondary' : 'default'}
+                        onClick={() => paginate(number)}
+                    >
+                        {number}
+                    </Button>
+                ))}
+            </div>
+
 
 
         </>
