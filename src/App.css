@@ -74,6 +74,35 @@ body{
   
 }
 
+.botao-envio{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: titulo !important;
+  border-radius: 50px !important;
+  height: 50px;
+  width: auto;
+  transition: 500ms !important;
+  background-color: #A12D2E !important ;
+  color: #EAE8DB !important;
+  margin-top: 6% !important;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+.botao-envio:hover{
+  transform: scale(1.05);
+  background-color: #EAE8DB !important ;
+  color: #A12D2E !important;
+  border: 3px solid #A12D2E ;
+}
+.botao-envio p{
+  display: flex;
+  color: #EAE8DB !important;  
+}
+
 
 /* HOME */
 
@@ -909,12 +938,17 @@ h1{
 
 
 .overlayNovoEvento .container-data-novo-evento{
-  display: flex;
+  display: none;
   flex-direction:column;
-  height: 60%;
+  height: auto;
+  padding-bottom: 3%;
   width: 55%;
   background-color: #EAE8DB ;
   border-radius: 5px;
+}
+
+.container-data-novo-evento.active{
+  display: flex !important;
 }
 
 .container-data-novo-evento .titulo{
@@ -932,6 +966,7 @@ h1{
 .container-data-novo-evento .calendario-overlay{
   display: flex;
   flex-direction: column;
+  
 }
 
 .container-data-novo-evento .calendario-overlay .titulo-calendario{
@@ -948,7 +983,8 @@ h1{
 }
 
 .informacoesEvento{
-  margin-left: 7%;
+  margin-left: 8%;
+  margin-top: 3%;
   width: 100%;
   height: 100%;
 }
@@ -1724,3 +1760,4 @@ ul {
   margin-left: 10%;
   margin-right: 10%;
 }
+

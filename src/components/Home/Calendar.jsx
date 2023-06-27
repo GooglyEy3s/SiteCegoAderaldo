@@ -240,7 +240,7 @@ function Calendar() {
       </div>
 
       <div className = {novoClass === false ? 'overlayNovoEvento' : 'overlayNovoEvento active'}>
-        <div className="container-data-novo-evento">
+        <div className={"container-data-novo-evento active"}>
           <div className="titulo">
             <img src={volta} alt="" onClick={trocarClasse} />
             <h1>Novo Evento</h1>
