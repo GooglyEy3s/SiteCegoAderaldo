@@ -14,6 +14,7 @@ import { Container, Box, Typography, TextField, Button } from "@mui/material"
 import cantores from "../../midia/cantores.png";
 import passaro from "../../midia/passaro.png";
 import lixo from "../../midia/lixo2.png"
+import x from "../../midia/volta3.png"
 
 import {AdminContext, AdminProvider} from "../Login_Contexto/ContextoLogin";
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
@@ -69,6 +70,7 @@ function Calendar() {
             .then(
                 (response) => {
                     SetEventos(response.data)
+                    console.log (response.data)
                 }
             )
             .catch(error => console.log(error))
@@ -205,6 +207,9 @@ function Calendar() {
     return false
   }
 
+
+  const [activ, Setactiv] = useState('')
+
   return (
     <>
       <div className={overlay}>
@@ -315,6 +320,7 @@ function Calendar() {
                       variant="contained"
                       sx={{ mt: 7, mb: 2, color: "white", backgroundColor:"#A12D2E", fontFamily:"titulo" }}
                       onClick={MontarEvento}
+                      className="botao-envio"
                     >
                       Criar novo Evento
                     </Button>
@@ -358,6 +364,18 @@ function Calendar() {
 
               dateClick={mostra}
             />
+            
+          </div>
+          <div className={"overlayNovoEvento " + activ}>
+            
+              <div className="workshopconteinar">
+                <div className="fechar-formulario"><img src={x} alt="" onClick={() => Setactiv('')} /><h1>Workshop</h1></div>
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf8566TmcMFKFqNVv6ldez26beNlS14NkxIvDbJ9-6XMu_4Dg/viewform?embedded=true" className="form-workshop" width="100%" height="100%" frameborder="0" marginheight="" marginwidth="0">Carregando…</iframe>
+              </div>
+          </div>
+          <div className="corpo-workshop">
+            <p>Sugira um novo Workshop para o nosso calendário!</p>
+            <div className="botao active" onClick={() => Setactiv('active')}><p>Clique Aqui!</p></div>
           </div>
         </div>
 

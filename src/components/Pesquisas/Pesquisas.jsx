@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { useContext } from "react";
+import { Button } from '@material-ui/core';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 import lupa from "../../midia/lupa.png"
 import x from "../../midia/volta3.png"
@@ -12,13 +15,16 @@ import lixo from "../../midia/lixo.png"
 import { AdminContext, AdminProvider } from "../Login_Contexto/ContextoLogin";
 
 
-import { Container, Box, Typography, TextField, Button } from "@mui/material"
+import { Container, Box, Typography, TextField } from "@mui/material"
 
 const Pesquisas = () => {
     const [linkForm, SetLinkForm] = useState('')
-    const [pesquisas, SetPesquisa] = useState([{}])
+    const [pesquisas, SetPesquisa] = useState([])
     const [classe, SetClass] = useState('')
     const [modalClass, SetmodalClass] = useState('')
+    const [numeroAcessos, setNumeroAcessos] = useState(0);
+    const [novotrabalho2,SetNovoTrabalho2] = useState(true);
+
 
     const [tituloPesquisa, SetTituloPesquisa] = useState('')
     const [descricaoPesquisa, SetDescricaoPesquisa] = useState('')
@@ -32,6 +38,80 @@ const Pesquisas = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [publicacoesPerPage] = useState(4);
 
+
+    
+    useEffect(
+        () => {
+            axios.get("http://localhost:3001/pesquisas/listar")
+                .then(
+                    (response) => {
+                        SetPesquisa(response.data.slice().reverse())
+                    }
+                )
+                .catch(error => console.log(error))
+        }
+        ,
+        []
+    )
+    useEffect(
+        () => {
+            axios.get("http://localhost:3001/pesquisas/listar")
+                .then(
+                    (response) => {
+                        SetPesquisa(response.data.slice().reverse())
+                    }
+                )
+                .catch(error => console.log(error))
+        }
+        ,
+        [mudou]
+    )
+    useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            setNumeroAcessos(response.data[2].numero);
+            console.log(response.data[2].numero)
+          })
+          .catch(error => console.log(error));
+      }, []);
+
+    useEffect(() => {
+        if (numeroAcessos !== 0) {
+          const novoNumero = numeroAcessos + 1;
+          axios.put(`http://localhost:3001/acessos/update/64a0453b194652b31b25b013`, { numero: novoNumero })
+            .then(response => {
+              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            })
+            .catch(error => console.log(error));
+        }
+      }, [novotrabalho2]);
+
+    const MontarPesquisa = () => {
+        SetNovoTrabalho2(false)
+        const novoTrabalho = { titulo: tituloPesquisa, descricao: descricaoPesquisa, link: linkPesquisa }
+        axios.post("http://localhost:3001/pesquisas/adicionar", novoTrabalho)
+            .then(
+                (response) => {
+                    alert(`Trabalho: ${response.data.nome} adicionado!`)
+                    SetmodalClass("")
+                    setMudou(!mudou)
+
+                }
+            )
+            .catch(error => console.log(error))
+    }
+
+    function deletar(id) {
+        if (window.confirm("Deseja Excluir essa Pesquisa? ")) {
+            axios.delete(`http://localhost:3001/pesquisas/delete/${id}`)
+                .then(
+                    (response) => {
+                        setMudou(!mudou)
+                    }
+                )
+                .catch(error => console.log(error))
+        }
+    }
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
@@ -66,58 +146,6 @@ const Pesquisas = () => {
         console.log(links[1])
     }
 
-    useEffect(
-        () => {
-            axios.get("http://localhost:3001/pesquisas/listar")
-                .then(
-                    (response) => {
-                        SetPesquisa(response.data)
-                    }
-                )
-                .catch(error => console.log(error))
-        }
-        ,
-        []
-    )
-    useEffect(
-        () => {
-            axios.get("http://localhost:3001/pesquisas/listar")
-                .then(
-                    (response) => {
-                        SetPesquisa(response.data)
-                    }
-                )
-                .catch(error => console.log(error))
-        }
-        ,
-        [mudou]
-    )
-
-    const MontarPesquisa = () => {
-        const novoTrabalho = { titulo: tituloPesquisa, descricao: descricaoPesquisa, link: linkPesquisa }
-        axios.post("http://localhost:3001/pesquisas/adicionar", novoTrabalho)
-            .then(
-                (response) => {
-                    alert(`Trabalho: ${response.data.nome} adicionado!`)
-                    SetmodalClass("")
-                    setMudou(!mudou)
-
-                }
-            )
-            .catch(error => console.log(error))
-    }
-
-    function deletar(id) {
-        if (window.confirm("Deseja Excluir? " + id)) {
-            axios.delete(`http://localhost:3001/pesquisas/delete/${id}`)
-                .then(
-                    (response) => {
-                        setMudou(!mudou)
-                    }
-                )
-                .catch(error => console.log(error))
-        }
-    }
 
     return (
         <>
@@ -212,7 +240,7 @@ const Pesquisas = () => {
                 </div>
             </div>
             <div className="pesquisas">
-                {pesquisas.slice().reverse().map((pesquisa) =>
+                {currentPublicacoes.map((pesquisa) =>
                     <>
                         <div className="item-pesquisa" >
                             <div className="pesquisa" >

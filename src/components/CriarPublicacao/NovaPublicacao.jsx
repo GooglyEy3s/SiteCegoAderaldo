@@ -15,6 +15,8 @@ const NovaPublicacao = () => {
     const [titulo, setNome] = useState('');
     const [descricao, setDescricaoe] = useState('aaaaaa');
     const [publico, setPublico] = useState(true);
+    const [numeroAcessos, setNumeroAcessos] = useState(0);
+    const [novotrabalho2,SetNovoTrabalho2] = useState(true);
     const navigate = useNavigate()
 
 
@@ -24,17 +26,38 @@ const NovaPublicacao = () => {
 
     function handleSubmit(event) {
         event.preventDefault()
-
+        SetNovoTrabalho2(false)
+        console.log(novotrabalho2)
         const novoTrabalho = { titulo, descricao, publico:acesso }
         axios.post("http://localhost:3001/trabalhos/adicionar", novoTrabalho)
             .then(
                 (response) => {
                     alert(`Trabalho: ${response.data.nome} adicionado!`)
                     navigate("/PaginaPublicacao")
+                    
                 }
             )
             .catch(error => console.log(error))
     }
+    useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            setNumeroAcessos(response.data[1].numero);
+            console.log(response.data[1].numero)
+          })
+          .catch(error => console.log(error));
+      }, []);
+
+    useEffect(() => {
+        if (numeroAcessos !== 0) {
+          const novoNumero = numeroAcessos + 1;
+          axios.put(`http://localhost:3001/acessos/update/64a04531194652b31b25b012`, { numero: novoNumero })
+            .then(response => {
+              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            })
+            .catch(error => console.log(error));
+        }
+      }, [novotrabalho2]);
 
     const [acesso,SetAcesso] = useState ()
 

@@ -9,6 +9,7 @@ import ChamarPaginaPublicacao from "../Trabalhos Publicados/ChamarPaginaPublicac
 import ChamarLogin from "../Login/ChamarLogin";
 import ChamarNovaPublicacao from "../CriarPublicacao/ChamarNovaPublicacao";
 import ChamarPesquisas from "../Pesquisas/ChamarPesquisas";
+import ChamarCadastro from "../Cadastro/ChamarCadastro";
 
 import { useEffect } from "react";
 import axios from "axios";
@@ -26,6 +27,7 @@ const MainPage = () => {
                     <Route path='/Login' element={<ChamarLogin />} />
                     <Route path='/novaPublicacao' element={<ChamarNovaPublicacao />} />
                     <Route path='/pesquisas' element={<ChamarPesquisas />} />
+                    <Route path='/cadastro' element={<ChamarCadastro />} />
                 </Routes>
             </BrowserRouter> 
         </AdminProvider>

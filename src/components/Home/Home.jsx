@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 // HEADER
 import Casa from "../../midia/logo Casa de saberes2.png"
-import Usuario from "../../midia/usuario.png"
+import UsuarioImg from "../../midia/user.png"
 import Fonte from "./Fonte"
 import contrat from "../../midia/contrast.png"
+
 
 
 // // // IMAGE-SLIDER
@@ -18,9 +19,9 @@ import { SliderData } from "../../assets/ImageSlider2/SliderData"
 import { useEffect } from "react"
 import { useRef } from "react"
 import image from "../../midia//216151_right_chevron_icon.png"
-import {AdminContext, AdminProvider} from "../Login_Contexto/ContextoLogin";
+import {AdminContext,Login, AdminProvider} from "../Login_Contexto/ContextoLogin";
 import { useContext } from "react"
-import { Container, Box, Typography, TextField, Button } from "@mui/material"
+import { Container, Box, Typography, TextField, Button, Menu } from "@mui/material"
 import volta from "../../midia/volta2.png"
 import { useNavigate } from "react-router-dom"
 
@@ -31,10 +32,15 @@ import Whatssap from "../../midia/zap.png"
 import Facebook from "../../midia/face.png"
 import Instagram from "../../midia/insta.png"
 import axios from "axios";
+import CountUp from "react-countup"
+import ScrollTrigger from "react-scroll-trigger"
+
 
 // PESQUISA
 import lupa from "../../midia/lupa2.png"
 import x from "../../midia/volta3.png"
+
+//DADOS
 
 
 const ImageSlider = ({slides}) => {
@@ -137,9 +143,9 @@ const BotaoPesquisa = () => {
             </div>
             
             <div className="caixa-botao">
+                
                 <div className="botao active botao-pesquisa" onClick={() => SetClass('active')}>
                     <img src={lupa} alt="" />
-                    <p>Nova pesquisa disponível!</p>
                 </div>
             </div>
         </>
@@ -147,6 +153,30 @@ const BotaoPesquisa = () => {
 }
 
 const Header = () => {
+
+    const { Usuario, SetUsuario } = useContext(AdminContext);
+    const { isAdmin, setIsAdmin } = useContext(AdminContext);
+    const [isLoged, SetIsLoged  ] = useState(false);
+    const [active, SetActive ] = useState('');
+    
+    useEffect(
+        () => {
+            console.log(Usuario)
+        }
+        ,
+        []
+    )
+    const Sair = () =>{
+        setIsAdmin(false)
+        SetUsuario()
+    }
+    const Trocar = () =>{
+        if(active == ''){
+            SetActive('active')
+        }
+        else (SetActive(''))
+    }
+
     return (
         <div className="header">
             <div className="barra-header">
@@ -162,11 +192,21 @@ const Header = () => {
                     <Link to={'/PaginaPublicacao'}><a > Noticias e Oportunidade</a></Link>
                     <Link to={'/PaginaPublicacao'}><a > Publicações</a></Link>
                     <Link to={'/pesquisas'}><a > Pesquisas</a></Link>
-                    
-                    <Link className="user-icon" to={'/Login'}>
-                        <img  src={Usuario} alt="Login" />
-                    </Link>
-                    
+                    <>
+                        {Usuario ? (
+                            <div className="nome-usuario">
+                                <p className="nome-usuario" onClick={Trocar}>Olá {Usuario.nome} !</p>
+                                <div className={"dropdow " + active}>
+                                    <p className="sair" onClick={Sair}>Sair</p>
+                                </div>
+                            </div>
+                            
+                        ) : (
+                            <Link className="user-icon" to={'/Login'}>
+                                <img  src={UsuarioImg} alt="Login" />
+                            </Link>
+                        )}
+                    </>
                 </div>
             </div>
         </div>
@@ -315,6 +355,7 @@ const Noticias = () => {
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2, color: "white"}}
                                     onClick={MontarNoticia}
+                                    className="botao-envio"
                                     
                                 >
                                     Criar Noticia
@@ -362,11 +403,193 @@ const Noticias = () => {
     );
   };
 
+  const NossosDados = () => {
+    const [numeroAcessos, setNumeroAcessos] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+    const [mudou, SetMudou] = useState(false);
+
+    useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            setNumeroAcessos(response.data[0].numero);
+          })
+          .catch(error => console.log(error));
+      }, []);
+    
+      useEffect(() => {
+        if (numeroAcessos !== 0) {
+          const novoNumero = numeroAcessos + 1;
+          axios.put(`http://localhost:3001/acessos/update/649ed67ae5acda81ef1a7609`, { numero: novoNumero })
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => console.log(error));
+        }
+      }, [numeroAcessos]);
+
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const element = document.getElementById("contenedor-nossos-dados");
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+          setIsVisible(isVisible);
+        }
+      };
+  
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+  
+  
+    return (
+        <></>
+    //   <div className="rodape_NossosDados">
+    //     <div className="conteudo-container">
+    //       <div className="noticias-container">
+    //         {/* Componente de notícias */}
+    //       </div>
+    //       <div id="contenedor-nossos-dados">
+    //         {isVisible ? (
+    //           <div className="calendario-header_Nossos_dados">
+    //             <h1>Confira nossos Resultados</h1>
+    //             <p>Pessoas que acessaram nosso site:</p>
+    //             <div
+    //               className="numero-acessos"
+    //               style={{ fontSize: "60px", fontWeight: "bold" }}
+    //             >
+    //               {numeroAcessos}
+    //             </div>
+    //           </div>
+    //         ) : null}
+    //       </div>
+    //     </div>
+    //   </div>
+    );
+  };
+  
+
 const Footer = () => {
+    const [numeroAcessos, setNumeroAcessos] = useState(0);
+    const [trabalhos, SetTrabalhos] = useState(0);
+    const [pesquisas, SetPesquisas] = useState(0);
+    
+    const [mudou, SetMudou] = useState(false);
+
+
+    useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            SetTrabalhos(response.data[1].numero);
+          })
+          .catch(error => console.log(error));
+      }, []);
+
+      useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            SetPesquisas(response.data[2].numero);
+          })
+          .catch(error => console.log(error));
+      }, []);
+
+    
+    useEffect(() => {
+        axios.get("http://localhost:3001/acessos/listar")
+          .then(response => {
+            setNumeroAcessos(response.data[0].numero);
+          })
+          .catch(error => console.log(error));
+      }, []);
+    
+      useEffect(() => {
+        if (numeroAcessos !== 0) {
+          const novoNumero = numeroAcessos + 1;
+          axios.put(`http://localhost:3001/acessos/update/649ed67ae5acda81ef1a7609`, { numero: novoNumero })
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => console.log(error));
+        }
+      }, [numeroAcessos]);
+
+    //   function Number ({n}) {
+    //     const{number} = useSpring ({
+    //         from: {number:0},
+    //         number:n,
+    //         delay:200,
+    //         config: {mass: 1, tension:20, friction:10},
+    //     })
+    //     return <animated.div> {number.to((n) => n.toFixed(0))}</animated.div>
+    //   }
+
+
+    
     return (
         <>
+           
             <div class="wrapper">
                 <div class="push"></div>
+            </div>
+            <div className="rodape_NossosDados">
+                <div className="conteudo-container">
+                    <div className="noticias-container">
+                        {/* Componente de notícias */}
+                    </div>
+                    <div id="contenedor-nossos-dados">
+                       
+                            <div className="calendario-header_Nossos_dados">
+                                <h4>Confira nossos </h4>
+                                <h1>Resultados!</h1>
+                            </div>
+
+                            <div className="dados">
+
+                                <div className="numero">
+                                    
+                                    <div
+                                        className="numero-acessos"
+                                        style={{ fontSize: "60px", fontWeight: "bold" }}
+                                    >
+                                        <ScrollTrigger onEnter={() => SetMudou(true)} onExit={ ()=> SetMudou(false)}>
+                                            <p> { mudou && <CountUp start={0} end={pesquisas} duration={2} delay={0} />} </p>
+                                        </ScrollTrigger>
+                                    </div>
+                                    <p>Pesquisas Realizadas</p>
+                                </div>
+
+                                <div className="numero">
+                                    
+                                    <div
+                                        className="numero-acessos"
+                                        style={{ fontSize: "60px", fontWeight: "bold" }}
+                                    >
+                                        <ScrollTrigger onEnter={() => SetMudou(true)} onExit={ ()=> SetMudou(false)}>
+                                            <p> { mudou && <CountUp start={0} end={numeroAcessos} duration={2} delay={0} />} </p>
+                                        </ScrollTrigger>
+                                    </div>
+                                    <p>Pessoas alcançadas</p>
+                                </div>
+
+                                <div className="numero">
+                                    
+                                    <div
+                                        className="numero-acessos"
+                                        style={{ fontSize: "60px", fontWeight: "bold" }}
+                                    >
+                                        <ScrollTrigger onEnter={() => SetMudou(true)} onExit={ ()=> SetMudou(false)}>
+                                            <p> { mudou && <CountUp start={0} end={trabalhos} duration={2} delay={0} />} </p>
+                                        </ScrollTrigger>
+                                    </div>
+                                    <p>Trabalhos Publicados</p>
+                                </div>
+                                <div style={{clear: "both"}}></div>
+                            </div>
+                    </div>
+                </div>
             </div>
             <div className="cor">
                 <div className="rodape">
@@ -408,4 +631,4 @@ const Footer = () => {
     )
 }
 
-export { Header,Footer, ImageSlider, SobreNos, Noticias, BotaoPesquisa}
+export { Header,Footer, ImageSlider, SobreNos, Noticias, BotaoPesquisa, NossosDados}

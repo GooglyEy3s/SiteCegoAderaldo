@@ -6,21 +6,22 @@ import { Link } from "react-router-dom"
 import { useContext } from "react"
 import { useState } from "react";
 import { useEffect } from "react";
-import {AdminContext,AdminProvider} from "../Login_Contexto/ContextoLogin";
+import {AdminContext, AdminProvider} from "../Login_Contexto/ContextoLogin";
 
 
 import axios from "axios"
 
 
-const Signin = () => {
+const Cadastro = () => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [nome, setNome] = useState('');
+    const [fone, setFone] = useState('');
 
     const[usuarios,SetUsuarios] = useState ([])
 
     const { isAdmin, setIsAdmin } = useContext(AdminContext);
-    const { Usuario, SetUsuario } = useContext(AdminContext);
- 
+
     
     useEffect(
         () => {
@@ -36,6 +37,18 @@ const Signin = () => {
         []
     )
 
+    const MontarUsuario = () => {
+        const novoTrabalho = { nome: nome, email: email, senha: senha, fone:fone, tipo:'user'}
+        axios.post("http://localhost:3001/usuarios/adicionar", novoTrabalho)
+            .then(
+                (response) => {
+                    alert(`Trabalho: ${response.data.nome} adicionado!`)
+
+                }
+            )
+            .catch(error => console.log(error))
+    }
+
     
 
     const pegarEmail = (event) => {
@@ -50,14 +63,11 @@ const Signin = () => {
     
     const verificacao = () => {
         
-        if (usuarios.find(adm => adm.email == email && adm.senha == senha)) {
-            SetUsuario(usuarios.find(adm => adm.email == email && adm.senha == senha))
-            if (usuarios.find(adm => adm.email == email && adm.tipo == 'adm')) {
-                setIsAdmin(true)
-                console.log(isAdmin)
-            }
+        if (usuarios.find(adm => adm.email == email && adm.tipo == 'adm')) {
+
+            setIsAdmin(true)
+            console.log(isAdmin)
         }
-        
     }
  
 
@@ -67,11 +77,11 @@ const Signin = () => {
             <div className="login">
                 <div className="conteudo">
                     <div className="titulo">
-                        <Link to={'/'}> <img src={volta} alt="" /> </Link>
-                        <h1>Login</h1>
+                        <Link to={'/Login'}> <img src={volta} alt="" /> </Link>
+                        <h1>Cadastro</h1>
                     </div>
 
-                    <Container maxWidth="md" className="margem">
+                    <Container className="margem" sx={{paddingLeft:"0px"}}>
                         <Box
                             sx={{
                                 display: "flex",
@@ -85,13 +95,23 @@ const Signin = () => {
                                 required
                                 margin="normal"
                                 fullWidth
+                                name="Nome"
+                                label="Nome"
+                                id="senha"
+                                onChange={(x) => { setNome(x.target.value) }}
+                            />
+
+                            <TextField
+                                required
+                                margin="normal"
+                                fullWidth
                                 id="email"
                                 label="Endereço de e-mail"
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
                                 sx={{}}
-                                onChange={pegarEmail}
+                                onChange={(x) => { setEmail(x.target.value) }}
                             />
                             <TextField
                                 required
@@ -101,8 +121,18 @@ const Signin = () => {
                                 label="Senha"
                                 type="password"
                                 id="senha"
-                                onChange={pegarSenha}
+                                onChange={(x) => { setSenha(x.target.value) }}
                             />
+                            <TextField
+                                required
+                                margin="normal"
+                                fullWidth
+                                name="Nome"
+                                label="Telefone"
+                                id="senha"
+                                onChange={(x) => { setFone(x.target.value) }}
+                            />
+                            
                             { }
                             <Link to={'/'}>
                                 <Button
@@ -110,33 +140,14 @@ const Signin = () => {
                                     fullWidth
                                     variant="contained"
                                     sx={{ mb: 2, color: "white" }}
-                                    onClick={verificacao}
+                                    onClick={MontarUsuario}
                                     className="botao-envio"
                                 >
-                                    Sign In
+                                    Cadastrar!
                                 </Button>
                             </Link>
 
 
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    justifyContent: "space-between"
-                                }}
-                                width="100%"
-                            >
-
-                                <Link
-                                    href="#"
-                                    underline="none"
-                                    className="link"
-                                    fontSize={"15px"}
-                                    to={"/cadastro"}
-                                >
-                                    Não tem conta? Cadastre-se.
-                                </Link>
-                            </Box>
                         </Box>
                     </Container>
                 </div>
@@ -152,4 +163,4 @@ const Signin = () => {
 
 }
 
-export default Signin
+export default Cadastro
